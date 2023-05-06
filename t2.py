@@ -12,9 +12,9 @@ lib.initialize_string_instrument(instrument1, lib.calculate_frequency(45+24))
 
 
 
-lib.fill_buffer(lib.access_dampening_buffer(instrument1, 0), 0.0001)
-lib.fill_buffer(lib.access_dampening_buffer(instrument1, 1), 0.0001)
-lib.fill_buffer(lib.access_dampening_buffer(instrument1, 2), 0.0001)
+lib.fill_buffer(lib.access_dampening_buffer(instrument1, 0), 0.0003)
+lib.fill_buffer(lib.access_dampening_buffer(instrument1, 1), 0.0003)
+lib.fill_buffer(lib.access_dampening_buffer(instrument1, 2), 0.0003)
 
 
 #output_buffer = lib.allocate_buffer()
@@ -25,6 +25,7 @@ lib.fill_buffer(lib.access_dampening_buffer(instrument1, 2), 0.0001)
 
 buffer_index = 0
 
+transpose = 0
 
 def midi_input_thread():
 	last_note = None
@@ -40,7 +41,7 @@ def midi_input_thread():
 
 			if ev.type == midi.SND_SEQ_EVENT_NOTEON:
 				note = ev.data.note
-				last_note = note.note
+				last_note = note.note + transpose
 
 				print('Note on', note.note, note.velocity)
 
@@ -49,7 +50,7 @@ def midi_input_thread():
 						pass
 				else:
 					with buffer_index_lock:
-						lib.set_string_instrument_frequency(instrument1, lib.calculate_frequency(note.note))
+						lib.set_string_instrument_frequency(instrument1, lib.calculate_frequency(last_note))
 						lib.access_injection_buffer(instrument1, buffer_index).contents[0] = 0.02 * note.velocity / 127
 
 
