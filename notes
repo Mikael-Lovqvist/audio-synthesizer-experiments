@@ -1,0 +1,9 @@
+Based on
+	/home/devilholk/Authorative_Repository/Projects/Experiments/synthesizer/attempt2/pacat_example.c
+	/home/devilholk/Tillfälliga tester/qcustomplot2/t2.py
+
+
+Buffers:
+	we will have 2 pending buffers so that when we are preparing an impulse shape we can overlap to the next one.
+
+
