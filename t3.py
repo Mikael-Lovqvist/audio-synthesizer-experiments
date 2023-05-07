@@ -1,7 +1,7 @@
 #In this experiment we will instantiate multiple instruments and mix them together
-from ffi import lib, SAMPLE_RATE
-import threading, midi
-
+from ffi import lib, SAMPLE_RATE, BUFFER_SIZE
+import threading, midi, time
+from math import tau, sqrt
 
 
 
@@ -10,19 +10,21 @@ class instrument:
 		self.buffer_index_lock = threading.Lock()
 		self.buffer_index = 0
 		self.backend = lib.allocate_string_instrument()
+		self.frequency = lib.calculate_frequency(note)
+		self.frequency_in_rads_per_sec = self.frequency * tau / 360
 
-		lib.initialize_string_instrument(self.backend, lib.calculate_frequency(note))
+		lib.initialize_string_instrument(self.backend, self.frequency)
 
-		lib.fill_buffer(lib.access_dampening_buffer(self.backend, 0), 0.0001)
-		lib.fill_buffer(lib.access_dampening_buffer(self.backend, 1), 0.0001)
-		lib.fill_buffer(lib.access_dampening_buffer(self.backend, 2), 0.0001)
+		lib.fill_buffer(lib.access_dampening_buffer(self.backend, 0), 0.00007)
+		lib.fill_buffer(lib.access_dampening_buffer(self.backend, 1), 0.00007)
+		lib.fill_buffer(lib.access_dampening_buffer(self.backend, 2), 0.00007)
 
 
 
-transpose = 0
+transpose = -12
 
 output_stream = lib.setup_output_stream()
-instrument_lut = {note:instrument(note) for note in range(20, 100)}
+instrument_lut = {note:instrument(note) for note in range(10, 100)}
 
 
 def midi_input_thread():
@@ -31,6 +33,7 @@ def midi_input_thread():
 
 		s = midi.Subscription(seq, (16, 0), seq)
 		s.start()
+
 
 		while True:
 			ev = seq.read_event().contents
@@ -50,8 +53,12 @@ def midi_input_thread():
 						#pass
 				else:
 					if i := instrument_lut.get(last_note):
+						sample_index = int(time.monotonic() * SAMPLE_RATE) % BUFFER_SIZE
+
+						note_injection = note.velocity / 127
+						harmonic_amplitude = sqrt(note_injection**2 + (note_injection / i.frequency_in_rads_per_sec))
 						with i.buffer_index_lock:
-							lib.access_injection_buffer(i.backend, i.buffer_index).contents[0] = 0.01 * note.velocity / 127
+							lib.access_injection_buffer(i.backend, i.buffer_index).contents[sample_index] = 0.001 / harmonic_amplitude
 
 
 			# elif ev.type == midi.SND_SEQ_EVENT_PITCHBEND:

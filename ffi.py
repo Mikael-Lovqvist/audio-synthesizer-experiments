@@ -4,7 +4,8 @@ lib = ctypes.CDLL('build/t1.so')
 
 SAMPLE_TYPE = ctypes.c_float
 SAMPLE_RATE = 48000
-buffer_segment = SAMPLE_TYPE * 128
+BUFFER_SIZE = 128
+buffer_segment = SAMPLE_TYPE * BUFFER_SIZE
 
 class string_instrument(ctypes.Structure):
 	_fields_ = (
