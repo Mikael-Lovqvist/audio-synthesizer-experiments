@@ -1,7 +1,6 @@
 #include "common.h"
 
 
-
 float calculate_frequency(int semi) {
 	/*
 		In this calculation semi 48 is an A (440 Hz), we should figure out what is the common practice and make sure we comply.
@@ -9,4 +8,6 @@ float calculate_frequency(int semi) {
 	*/
 	return powf(2, (float)(semi+3) / 12) * 27.5;
 }
+
+
 

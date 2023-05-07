@@ -13,7 +13,7 @@ class instrument:
 		self.frequency = lib.calculate_frequency(note)
 		self.frequency_in_rads_per_sec = self.frequency * tau / 360
 
-		lib.initialize_string_instrument(self.backend, self.frequency)
+		lib.deprecated_initialize_string_instrument(self.backend, self.frequency)
 
 		lib.fill_buffer(lib.access_dampening_buffer(self.backend, 0), 0.00007)
 		lib.fill_buffer(lib.access_dampening_buffer(self.backend, 1), 0.00007)
@@ -21,7 +21,7 @@ class instrument:
 
 
 
-transpose = -12
+transpose = -24
 
 output_stream = lib.setup_output_stream()
 instrument_lut = {note:instrument(note) for note in range(10, 100)}

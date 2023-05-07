@@ -6,8 +6,8 @@ instrument1 = lib.allocate_string_instrument()
 instrument2 = lib.allocate_string_instrument()
 
 
-lib.initialize_string_instrument(instrument1, lib.calculate_frequency(45+24))
-lib.initialize_string_instrument(instrument2, lib.calculate_frequency(54+36))
+lib.deprecated_initialize_string_instrument(instrument1, lib.calculate_frequency(45+24))
+lib.deprecated_initialize_string_instrument(instrument2, lib.calculate_frequency(54+36))
 
 
 lib.access_injection_buffer(instrument1, 0).contents[20] = 0.05

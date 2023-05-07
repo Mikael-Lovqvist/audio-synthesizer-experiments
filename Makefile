@@ -1,15 +1,21 @@
 
 CCFLAGS = -march=native -O3 -flto
 
-all: build/t1.so
+all: build/synthesizer.so
 
 clean:
 	rm build/*
 
-build/t1.so: build/t1.o build/string_instrument.o build/mixer.o build/pa_output.o
+build/synthesizer.so: build/utils.o build/string_instrument.o build/mixer.o build/pa_output.o build/filters.o build/buffers.o
 	gcc $(CCFLAGS) $^ --shared -fpic -lm -lpulse-simple -o $@
 
-build/t1.o: t1.c
+build/filters.o: filters.c
+	gcc $(CCFLAGS) -c $< -o $@
+
+build/buffers.o: buffers.c
+	gcc $(CCFLAGS) -c $< -o $@
+
+build/utils.o: utils.c
 	gcc $(CCFLAGS) -c $< -o $@
 
 build/pa_output.o: pa_output.c

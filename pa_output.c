@@ -13,10 +13,15 @@ pa_simple* setup_output_stream() {
 		.channels = 1
 	};
 
+	static const pa_buffer_attr ba = {
+		.maxlength = -1,
+		.tlength = 1024,
+	};
+
 	pa_simple *s = NULL;
 	int error;
 
-	if (!(s = pa_simple_new(NULL, "efforting.tech", PA_STREAM_PLAYBACK, NULL, "playback", &ss, NULL, NULL, &error))) {
+	if (!(s = pa_simple_new(NULL, "efforting.tech", PA_STREAM_PLAYBACK, NULL, "playback", &ss, NULL, &ba, &error))) {
 		fprintf(stderr, __FILE__": pa_simple_new() failed: %s\n", pa_strerror(error));
 	}
 
